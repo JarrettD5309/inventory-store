@@ -8,4 +8,4 @@ VALUES ("turntable","stereo",149.99,50),
 ("bowls","kitchen",12.99,15),
 ("toothpaste","hygiene",4.99,100),
 ("deodorant","hygiene",10.00,75),
-("shampoo","hygiene",20.99,10)
+("shampoo","hygiene",20.99,10);
