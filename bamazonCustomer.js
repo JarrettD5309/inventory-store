@@ -27,11 +27,92 @@ function showInventory() {
         });
 
         for (var i=0;i<res.length;i++) {
-            table.push([res[i].id,res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
+            table.push([res[i].id,res[i].product_name,res[i].department_name,Number(res[i].price).toFixed(2),res[i].stock_quantity]);
         }
 
         console.log(table.toString());
+
+        askCustomer();
     });
+}
+
+function askCustomer () {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Please choose an option:",
+            choices: ["Buy An Item","EXIT"],
+            name: "exit"
+        }
+    ]).then(function(answer) {
+        if (answer.exit==="EXIT") {
+            connection.end();
+        } else {
+            askItem();
+        }
+    })
+}
+
+function askItem() {
+    inquirer.prompt([
+        {
+            type: "number",
+            message: "What item would you like to buy? (Enter ID #)",
+            name: "idNum"
+        },
+        {
+            type: "number",
+            message: "How many units would you like to purchase?",
+            name: "amount"
+        }
+    ]).then(function(answers) {
+        if (isNaN(answers.idNum) || isNaN(answers.amount)) {
+            console.log("One of your entries was not a number. Please try again");
+            askCustomer();
+        } else {
+            connection.query("SELECT * FROM products WHERE ?", {id:answers.idNum}, function (err, res) {
+                var pickedItem = res;
+                
+                if (answers.amount>pickedItem[0].stock_quantity) {
+                    console.log ("Insufficient quantity. Please try again.");
+                    askCustomer();
+                } else {
+                    reduceStock(pickedItem,answers.amount);
+                }
+            });
+        }
+    });
+}
+
+function reduceStock(item,amount) {
+    connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+          {
+            stock_quantity: item[0].stock_quantity-amount
+          },
+          {
+            id: item[0].id
+          }
+        ],
+        function(err, res) {
+            var totalCost = Number(amount*item[0].price).toFixed(2);
+            console.log(`Thank you for your purchase!\nYour total is $${totalCost}.`);
+            inquirer.prompt([
+                {
+                    type: "confirm",
+                    message: "Would you like to buy another item?",
+                    name: "buyBol"
+                }
+            ]).then(function(answer) {
+                if (answer.buyBol) {
+                    showInventory();
+                } else {
+                    connection.end();
+                }
+            });
+        }
+      );
 }
 
 connection.connect(function (err) {
