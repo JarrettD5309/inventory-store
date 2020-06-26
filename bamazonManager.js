@@ -94,7 +94,7 @@ function addInventory() {
                 message: "How many units do you want to add?",
                 name: "addUnits"
             }
-        ]).then(function(answer) {
+        ]).then(function (answer) {
             if (isNaN(answer.idNum) || isNaN(answer.addUnits)) {
                 console.log("--------------------\nOne of your entries was not a number. Please try again.\n--------------------");
                 addInventory();
@@ -102,7 +102,7 @@ function addInventory() {
                 connection.query("SELECT * FROM products WHERE ?", { id: answer.idNum }, function (err, res) {
                     if (err) throw err;
                     var pickedItem = res;
-    
+
                     connection.query(
                         "UPDATE products SET ? WHERE ?",
                         [
@@ -115,7 +115,7 @@ function addInventory() {
                         ],
                         function (err, res) {
                             if (err) throw err;
-                            
+
                             console.log(`--------------------\nThe product "${pickedItem[0].product_name}" now has an inventory stock of ${pickedItem[0].stock_quantity + answer.addUnits}.\n--------------------`);
 
                             menuReturn();
@@ -131,6 +131,53 @@ function addInventory() {
 }
 
 function newProduct() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the new product you would like to add?",
+            name: "newProductName"
+        },
+        {
+            type: "input",
+            message: "What department is this product in?",
+            name: "newProductDepartment"
+        },
+        {
+            type: "number",
+            message: "What is the price of the product? (please use only numbers ie do not enter $)(ex 19.99)",
+            name: "newProductPrice"
+        },
+        {
+            type: "number",
+            message: "How many units should be added to the stock?",
+            name: "newProductStock"
+        }
+    ]).then(function (answers) {
+        if (isNaN(answers.newProductPrice) || isNaN(answers.newProductStock)) {
+            console.log("--------------------\nOne of your entries was not a number. Please try again.\n--------------------");
+            newProduct();
+        } else {
+            connection.query("INSERT INTO products SET ?",
+            {
+                product_name: answers.newProductName,
+                department_name: answers.newProductDepartment,
+                price: Number(answers.newProductPrice).toFixed(2),
+                stock_quantity: answers.newProductStock
+            }, function (err, res) {
+                if (err) throw err;
+                console.log("You have successfully added a new product.");
+                connection.query("SELECT * FROM products WHERE ?",{
+                    id: res.insertId
+                },function(err,res) {
+                    if (err) throw err;
+                    makeTable(res);
+                    menuReturn();
+                });
+                
+            });
+        }
+
+    });
 
 }
 
