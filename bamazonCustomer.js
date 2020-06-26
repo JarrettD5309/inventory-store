@@ -22,12 +22,12 @@ function showInventory() {
         if (err) throw err;
 
         var table = new Table({
-            head: ["ID","Product","Dept","Price","Stock"],
-            colWidths:[5,20,15,10,8]
+            head: ["ID", "Product", "Dept", "Price", "Stock"],
+            colWidths: [5, 20, 15, 10, 8]
         });
 
-        for (var i=0;i<res.length;i++) {
-            table.push([res[i].id,res[i].product_name,res[i].department_name,Number(res[i].price).toFixed(2),res[i].stock_quantity]);
+        for (var i = 0; i < res.length; i++) {
+            table.push([res[i].id, res[i].product_name, res[i].department_name, Number(res[i].price).toFixed(2), res[i].stock_quantity]);
         }
 
         console.log(table.toString());
@@ -36,16 +36,16 @@ function showInventory() {
     });
 }
 
-function askCustomer () {
+function askCustomer() {
     inquirer.prompt([
         {
             type: "list",
             message: "Please choose an option:",
-            choices: ["Buy An Item","EXIT"],
+            choices: ["Buy An Item", "EXIT"],
             name: "exit"
         }
-    ]).then(function(answer) {
-        if (answer.exit==="EXIT") {
+    ]).then(function (answer) {
+        if (answer.exit === "EXIT") {
             connection.end();
         } else {
             askItem();
@@ -65,46 +65,46 @@ function askItem() {
             message: "How many units would you like to purchase?",
             name: "amount"
         }
-    ]).then(function(answers) {
+    ]).then(function (answers) {
         if (isNaN(answers.idNum) || isNaN(answers.amount)) {
-            console.log("One of your entries was not a number. Please try again");
+            console.log("--------------------\nOne of your entries was not a number. Please try again.\n--------------------");
             askCustomer();
         } else {
-            connection.query("SELECT * FROM products WHERE ?", {id:answers.idNum}, function (err, res) {
+            connection.query("SELECT * FROM products WHERE ?", { id: answers.idNum }, function (err, res) {
                 var pickedItem = res;
-                
-                if (answers.amount>pickedItem[0].stock_quantity) {
-                    console.log ("Insufficient quantity. Please try again.");
+
+                if (answers.amount > pickedItem[0].stock_quantity) {
+                    console.log("--------------------\nInsufficient quantity. Please try again.\n--------------------");
                     askCustomer();
                 } else {
-                    reduceStock(pickedItem,answers.amount);
+                    reduceStock(pickedItem, answers.amount);
                 }
             });
         }
     });
 }
 
-function reduceStock(item,amount) {
+function reduceStock(item, amount) {
     connection.query(
         "UPDATE products SET ? WHERE ?",
         [
-          {
-            stock_quantity: item[0].stock_quantity-amount
-          },
-          {
-            id: item[0].id
-          }
+            {
+                stock_quantity: item[0].stock_quantity - amount
+            },
+            {
+                id: item[0].id
+            }
         ],
-        function(err, res) {
-            var totalCost = Number(amount*item[0].price).toFixed(2);
-            console.log(`Thank you for your purchase!\nYour total is $${totalCost}.`);
+        function (err, res) {
+            var totalCost = Number(amount * item[0].price).toFixed(2);
+            console.log(`--------------------\nThank you for your purchase!\nYour total is $${totalCost}.\n--------------------`);
             inquirer.prompt([
                 {
                     type: "confirm",
                     message: "Would you like to buy another item?",
                     name: "buyBol"
                 }
-            ]).then(function(answer) {
+            ]).then(function (answer) {
                 if (answer.buyBol) {
                     showInventory();
                 } else {
@@ -112,7 +112,7 @@ function reduceStock(item,amount) {
                 }
             });
         }
-      );
+    );
 }
 
 connection.connect(function (err) {
