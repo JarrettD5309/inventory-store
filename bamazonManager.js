@@ -78,6 +78,56 @@ function lowInventory() {
 
 function addInventory() {
 
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+
+        makeTable(res);
+
+        inquirer.prompt([
+            {
+                type: "number",
+                message: "Pick a product to add inventory to (Enter ID #)",
+                name: "idNum"
+            },
+            {
+                type: "number",
+                message: "How many units do you want to add?",
+                name: "addUnits"
+            }
+        ]).then(function(answer) {
+            if (isNaN(answer.idNum) || isNaN(answer.addUnits)) {
+                console.log("--------------------\nOne of your entries was not a number. Please try again.\n--------------------");
+                addInventory();
+            } else {
+                connection.query("SELECT * FROM products WHERE ?", { id: answer.idNum }, function (err, res) {
+                    if (err) throw err;
+                    var pickedItem = res;
+    
+                    connection.query(
+                        "UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: pickedItem[0].stock_quantity + answer.addUnits
+                            },
+                            {
+                                id: pickedItem[0].id
+                            }
+                        ],
+                        function (err, res) {
+                            if (err) throw err;
+                            
+                            console.log(`--------------------\nThe product "${pickedItem[0].product_name}" now has an inventory stock of ${pickedItem[0].stock_quantity + answer.addUnits}.\n--------------------`);
+
+                            menuReturn();
+                        }
+                    );
+                });
+
+            }
+        });
+
+    });
+
 }
 
 function newProduct() {

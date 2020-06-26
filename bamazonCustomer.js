@@ -71,6 +71,7 @@ function askItem() {
             askCustomer();
         } else {
             connection.query("SELECT * FROM products WHERE ?", { id: answers.idNum }, function (err, res) {
+                if (err) throw err;
                 var pickedItem = res;
 
                 if (answers.amount > pickedItem[0].stock_quantity) {
@@ -96,6 +97,7 @@ function reduceStock(item, amount) {
             }
         ],
         function (err, res) {
+            if (err) throw err;
             var totalCost = Number(amount * item[0].price).toFixed(2);
             console.log(`--------------------\nThank you for your purchase!\nYour total is $${totalCost}.\n--------------------`);
             inquirer.prompt([
