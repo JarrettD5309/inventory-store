@@ -23,7 +23,7 @@ function showInventory() {
 
         var table = new Table({
             head: ["ID", "Product", "Dept", "Price", "Stock"],
-            colWidths: [5, 20, 15, 10, 8]
+            colWidths: [5, 25, 20, 15, 10]
         });
 
         for (var i = 0; i < res.length; i++) {

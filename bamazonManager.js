@@ -55,36 +55,24 @@ function viewProducts() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
-        var table = new Table({
-            head: ["ID", "Product", "Dept", "Price", "Stock"],
-            colWidths: [5, 20, 15, 10, 8]
-        });
+        makeTable(res);
 
-        for (var i = 0; i < res.length; i++) {
-            table.push([res[i].id, res[i].product_name, res[i].department_name, Number(res[i].price).toFixed(2), res[i].stock_quantity]);
-        }
+        menuReturn();
 
-        console.log(table.toString());
-
-        inquirer.prompt([
-            {
-                type: "list",
-                message: "Choose an option",
-                choices: ["Return to Main Menu","EXIT"],
-                name: "viewExit"
-            }
-        ]).then(function(answer){
-            if (answer.viewExit==="EXIT") {
-                connection.end();
-            } else {
-                begin();
-            }
-        })
     });
 
 }
 
 function lowInventory() {
+
+    connection.query("SELECT * FROM products WHERE stock_quantity<5", function (err, res) {
+        if (err) throw err;
+
+        makeTable(res);
+
+        menuReturn();
+
+    });
 
 }
 
@@ -93,6 +81,39 @@ function addInventory() {
 }
 
 function newProduct() {
+
+}
+
+function menuReturn() {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Choose an option",
+            choices: ["Return to Main Menu", "EXIT"],
+            name: "viewExit"
+        }
+    ]).then(function (answer) {
+        if (answer.viewExit === "EXIT") {
+            connection.end();
+        } else {
+            begin();
+        }
+    });
+
+}
+
+function makeTable(res) {
+
+    var table = new Table({
+        head: ["ID", "Product", "Dept", "Price", "Stock"],
+        colWidths: [5, 25, 20, 15, 10]
+    });
+
+    for (var i = 0; i < res.length; i++) {
+        table.push([res[i].id, res[i].product_name, res[i].department_name, Number(res[i].price).toFixed(2), res[i].stock_quantity]);
+    }
+
+    console.log(table.toString());
 
 }
 
