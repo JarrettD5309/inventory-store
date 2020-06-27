@@ -90,7 +90,8 @@ function reduceStock(item, amount) {
         "UPDATE products SET ? WHERE ?",
         [
             {
-                stock_quantity: item[0].stock_quantity - amount
+                stock_quantity: item[0].stock_quantity - amount,
+                product_sales: (amount*item[0].price)+item[0].product_sales
             },
             {
                 id: item[0].id
