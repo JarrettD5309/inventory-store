@@ -37,26 +37,6 @@ function beginSuper() {
 }
 
 function productSales() {
-    // connection.query("SELECT department_name, product_sales FROM products", function(err,res) {
-    //     if (err) throw err;
-    //     console.log(res);
-    //     var stereoTotal = 0;
-    //     var kitchenTotal = 0;
-    //     var hygieneTotal = 0;
-    //     for (var i=0;i<res.length;i++) {
-    //         if (res[i].department_name==="stereo") {
-    //             stereoTotal += res[i].product_sales;
-    //         } else if (res[i].department_name==="kitchen") {
-    //             kitchenTotal += res[i].product_sales;
-    //         } else if (res[i].department_name==="hygiene") {
-    //             hygieneTotal += res[i].product_sales;
-    //         }
-    //     }
-    //     console.log(`Stereo: ${stereoTotal} || Kitchen: ${kitchenTotal} || Hygiene: ${hygieneTotal}`);
-    // });
-    // connection.query("SELECT department_name, SUM(product_sales) dept_total FROM products GROUP BY department_name",function(err,res) {
-    //     console.log(res);
-    // });
     connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS total_sales, SUM(products.product_sales)-departments.over_head_costs AS total_profit FROM departments INNER JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name, departments.over_head_costs", function(err,res) {
         if (err) throw err;
         makeTableOne(res);
@@ -86,7 +66,7 @@ function createDepartment() {
                 over_head_costs: answers.overhead
             }, function (err, res) {
                 if (err) throw err;
-                console.log("You have successfully added a new department.");
+                console.log("--------------------\nYou have successfully added a new department.\n--------------------");
                 connection.query("SELECT * FROM departments WHERE ?",{
                     department_id: res.insertId
                 },function(err,res) {
