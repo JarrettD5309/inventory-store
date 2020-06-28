@@ -26,7 +26,7 @@ $ npm install
 
 3. Next, create a file named `.env`, add the following to it, replacing the value P@ssw0rd with your MySQL password:
 
-```js
+```console
 # mySQL password
 
 password=P@ssw0rd
