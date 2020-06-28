@@ -134,3 +134,16 @@ $ node bamazonSupervisor.js
 ```
 
 5. After each action you will be able to choose another action or exit the Supervisor View.
+
+## GIF/Video Example
+### Customer View
+![Customer View](https://media.giphy.com/media/cmTPfvvAl8s0mEToZT/giphy.gif)
+
+### Manager View
+![Manager View](https://media.giphy.com/media/iJaZNXykyXdmCXD4nr/giphy.gif)
+
+### Supervisor View
+![Supervisor View](https://media.giphy.com/media/RIBH8954aHVbOta2Nf/giphy.gif)
+
+full demo video - <https://drive.google.com/file/d/1vGghbQEhaS5XMJYl8egh869Dh1RAEHf9/view?usp=sharing>
+

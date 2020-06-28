@@ -37,7 +37,7 @@ function beginSuper() {
 }
 
 function productSales() {
-    connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS total_sales, SUM(products.product_sales)-departments.over_head_costs AS total_profit FROM departments INNER JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name, departments.over_head_costs", function(err,res) {
+    connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS total_sales, SUM(products.product_sales)-departments.over_head_costs AS total_profit FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name, departments.over_head_costs", function(err,res) {
         if (err) throw err;
         makeTableOne(res);
         beginSuper();
